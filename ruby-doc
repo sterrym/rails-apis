@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# example v1_9_3_448
+# ./ruby-doc v1_9_3_448
+tag = ARGV.first
+abort("please pass a tag - eg. v1_9_3_448") unless tag
+`cd ruby && git co #{tag} && cd ..`
+`bundle exec sdoc --debug --main ruby/README -x test -x example -x bin -N --title "Ruby #{tag}" --op "ruby-#{tag}" ruby ruby/README`
+`cd ruby && git co trunk && cd ..`
