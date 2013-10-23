@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+#!/usr/bin/env ruby
+# example v3.2.15
+# ./rails-doc v3.2.15
+tag = ARGV.first
+abort("please pass a tag - eg. v3.2.15") unless tag
+`cd rails && git co #{tag} && cd ..`
+`bundle exec sdoc -x test -x example -x bin -N --main rails/README.rdoc --title "#{tag}" --op "rails-#{tag}"`
+`cd rails && git co master && cd ..`
