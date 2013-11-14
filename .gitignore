@@ -1,6 +1,0 @@
-# Ignore original sources
-rails
-ruby
-
-/.bundle
-vendor/bundle
