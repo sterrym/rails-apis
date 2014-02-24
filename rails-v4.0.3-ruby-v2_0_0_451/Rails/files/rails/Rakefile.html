@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Rakefile</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            Rakefile
+        </h1>
+        <ul class="files">
+            <li>rails/Rakefile</li>
+            <li>Last modified: 2014-02-24 09:32:56 -0500</li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>require &#39;sdoc&#39; require &#39;net/http&#39;</p>
+
+<p>$:.unshift File.expand_path(&#39;..&#39;, __FILE__) require “tasks/release”
+require &#39;railties/lib/rails/api/task&#39;</p>
+
+<p>desc “<a href="../../classes/Build.html">Build</a> gem files for all
+projects” task :build =&gt; “all:build”</p>
+
+<p>desc “Release all gems to gemcutter and create a tag” task :release =&gt;
+“all:release”</p>
+
+<p>PROJECTS = %w(activesupport activemodel actionpack actionmailer
+activerecord railties)</p>
+
+<p>desc &#39;Run all tests by default&#39; task :default =&gt; %w(test
+test:isolated)</p>
+
+<p>%w(test test:isolated package gem).each do |task_name|</p>
+
+<pre class="ruby"><span class="ruby-identifier">desc</span> <span class="ruby-node">&quot;Run #{task_name} task for all projects&quot;</span>
+<span class="ruby-identifier">task</span> <span class="ruby-identifier">task_name</span> <span class="ruby-keyword">do</span>
+  <span class="ruby-identifier">errors</span> = []
+  <span class="ruby-constant">PROJECTS</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">project</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">system</span>(<span class="ruby-node">%Q(cd #{project} &amp;&amp; #{$0} #{task_name})</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">errors</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">project</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">fail</span>(<span class="ruby-node">&quot;Errors in #{errors.join(&#39;, &#39;)}&quot;</span>) <span class="ruby-keyword">unless</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">empty?</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>end</p>
+
+<p>desc “Smoke-test all projects” task :smoke do</p>
+
+<pre class="ruby">(<span class="ruby-constant">PROJECTS</span> <span class="ruby-operator">-</span> <span class="ruby-node">%w(activerecord)</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">project</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">system</span> <span class="ruby-node">%Q(cd #{project} &amp;&amp; #{$0} test:isolated)</span>
+<span class="ruby-keyword">end</span>
+<span class="ruby-identifier">system</span> <span class="ruby-node">%Q(cd activerecord &amp;&amp; #{$0} sqlite3:isolated_test)</span>
+</pre>
+
+<p>end</p>
+
+<p>desc “Install gems for all projects.” task :install =&gt; “all:install”</p>
+
+<p>desc “Generate documentation for the <a
+href="../../classes/Rails.html">Rails</a> framework” if <a
+href="http://'EDGE'">ENV</a></p>
+
+<pre>Rails::API::EdgeTask.new(&#39;rdoc&#39;)</pre>
+
+<p>else</p>
+
+<pre>Rails::API::StableTask.new(&#39;rdoc&#39;)</pre>
+
+<p>end</p>
+
+<p>desc &#39;Bump all versions to match version.rb&#39; task :update_versions
+do</p>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">dirname</span>(<span class="ruby-keyword">__FILE__</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;/version&quot;</span>
+
+<span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-string">&quot;RAILS_VERSION&quot;</span>, <span class="ruby-string">&quot;w&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">f</span>.<span class="ruby-identifier">puts</span> <span class="ruby-constant">Rails</span>.<span class="ruby-identifier">version</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">constants</span> = {
+  <span class="ruby-string">&quot;activesupport&quot;</span>   =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ActiveSupport&quot;</span>,
+  <span class="ruby-string">&quot;activemodel&quot;</span>     =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ActiveModel&quot;</span>,
+  <span class="ruby-string">&quot;actionpack&quot;</span>      =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ActionPack&quot;</span>,
+  <span class="ruby-string">&quot;actionmailer&quot;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ActionMailer&quot;</span>,
+  <span class="ruby-string">&quot;activerecord&quot;</span>    =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;ActiveRecord&quot;</span>,
+  <span class="ruby-string">&quot;railties&quot;</span>        =<span class="ruby-operator">&gt;</span> <span class="ruby-string">&quot;Rails&quot;</span>
+}
+
+<span class="ruby-identifier">version_file</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">read</span>(<span class="ruby-string">&quot;version.rb&quot;</span>)
+
+<span class="ruby-constant">PROJECTS</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">project</span><span class="ruby-operator">|</span>
+  <span class="ruby-constant">Dir</span>[<span class="ruby-node">&quot;#{project}/lib/*/version.rb&quot;</span>].<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+    <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">file</span>, <span class="ruby-string">&quot;w&quot;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span> <span class="ruby-identifier">version_file</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/Rails/</span>, <span class="ruby-identifier">constants</span>[<span class="ruby-identifier">project</span>])
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>end</p>
+
+<p># # We have a webhook configured in GitHub that gets invoked after pushes.
+# This hook triggers the following tasks: # #   * updates the local
+checkout #   * updates <a href="../../classes/Rails.html">Rails</a>
+Contributors #   * generates and publishes edge docs #   * if there&#39;s a
+new stable tag, generates and publishes stable docs # # Everything is
+automated and you do NOT need to run this task normally. # # We publish a
+new version by tagging, and pushing a tag does not trigger # that webhook.
+Stable docs would be updated by any subsequent regular # push, but if you
+want that to happen right away just run this. # desc &#39;Publishes docs,
+run this AFTER a new stable tag has been pushed&#39; task :publish_docs do</p>
+
+<pre class="ruby"><span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;api.rubyonrails.org&#39;</span>, <span class="ruby-value">8080</span>).<span class="ruby-identifier">start</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">http</span><span class="ruby-operator">|</span>
+  <span class="ruby-identifier">request</span>  = <span class="ruby-constant">Net</span><span class="ruby-operator">::</span><span class="ruby-constant">HTTP</span><span class="ruby-operator">::</span><span class="ruby-constant">Post</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;/rails-master-hook&#39;</span>)
+  <span class="ruby-identifier">response</span> = <span class="ruby-identifier">http</span>.<span class="ruby-identifier">request</span>(<span class="ruby-identifier">request</span>)
+  <span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>.<span class="ruby-identifier">body</span>
+<span class="ruby-keyword">end</span>
+</pre>
+
+<p>end</p>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+
+
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+
+
+    
+
+
+    <!-- Methods -->
+              </div>
+
+    </div>
+  </body>
+</html>
