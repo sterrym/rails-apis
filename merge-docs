@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+# example
+# ./merge-docs ruby-v2_1_1 rails-v4.2.1
+
+rubydir = ARGV[0]
+railsdir = ARGV[1]
+`sdoc-merge --title "#{rubydir}, #{railsdir}" --op "#{rubydir}-#{railsdir}" --names "#{rubydir},#{railsdir}" #{rubydir} #{railsdir}`
